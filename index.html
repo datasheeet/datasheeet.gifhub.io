@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Prática Veicular - IE Compatível</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .section { display: none; margin-top: 20px; }
+    label { display: block; margin-top: 10px; }
+    .cpf-input { margin-bottom: 10px; }
+    .aluno-box {
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .tipo-aluno {
+      margin-top: 5px;
+    }
+    .veiculo-info {
+      margin-top: 20px;
+    }
+    #resultado {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f4f4f4;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sistema de Exame</h1>
+
+  <!-- Botão para ir para a seção de Inclusão de Exame -->
+  <button onclick="mostrarInclusao()">Prática Veicular</button>
+
+  <!-- Informações do veículo -->
+  <div id="veiculoInfo" class="veiculo-info" style="display: none;">
+    <label for="placaVeiculo">Placa do Veículo:</label>
+    <input type="text" id="placaVeiculo" name="placaVeiculo" placeholder="Digite a placa" />
+
+    <label for="tipoVeiculo">Tipo de Veículo:</label>
+    <select id="tipoVeiculo" name="tipoVeiculo">
+      <option value="">Selecione</option>
+      <option value="automovel">Automóvel</option>
+      <option value="motocicleta">Motocicleta</option>
+    </select>
+  </div>
+
+  <!-- Seção de Inclusão de Exame -->
+  <div id="inclusaoExame" class="section">
+    <h2>Inclusão de Exame</h2>
+
+    <label for="quantidadeAlunos">Quantos alunos?</label>
+    <select id="quantidadeAlunos" onchange="gerarCamposCPF()">
+      <option value="0">Selecione</option>
+      <option value="1">1 aluno</option>
+      <option value="2">2 alunos</option>
+      <option value="3">3 alunos</option>
+      <option value="4">4 alunos</option>
+      <option value="5">5 alunos</option>
+    </select>
+
+    <div id="camposCPF"></div>
+
+    <div id="confirmarBox" style="display: none; margin-top: 20px;">
+      <button onclick="mostrarCPFs()">Confirmar</button>
+    </div>
+  </div>
+
+  <div id="resultado" style="display: none;">
+    <h3>CPFs Cadastrados:</h3>
+    <ul id="listaCPFs"></ul>
+  </div>
+
+  <script>
+    function mostrarInclusao() {
+      document.getElementById('veiculoInfo').style.display = 'block';
+      document.getElementById('inclusaoExame').style.display = 'block';
+      document.getElementById('resultado').style.display = 'none';
+    }
+
+    function gerarCamposCPF() {
+      var quantidade = parseInt(document.getElementById('quantidadeAlunos').value, 10);
+      var camposDiv = document.getElementById('camposCPF');
+      var confirmarBox = document.getElementById('confirmarBox');
+
+      camposDiv.innerHTML = '';
+      confirmarBox.style.display = quantidade > 0 ? 'block' : 'none';
+
+      if (quantidade <= 0) return;
+
+      for (var i = 1; i <= quantidade; i++) {
+        var alunoBox = document.createElement('div');
+        alunoBox.className = 'aluno-box';
+
+        // CPF
+        var labelCPF = document.createElement('label');
+        labelCPF.innerHTML = 'CPF do Aluno ' + i + ':';
+        var inputCPF = document.createElement('input');
+        inputCPF.type = 'text';
+        inputCPF.name = 'cpf' + i;
+        inputCPF.id = 'cpf' + i;
+        inputCPF.className = 'cpf-input';
+        inputCPF.setAttribute('placeholder', 'Digite o CPF');
+
+        // Tipo de aluno (radio)
+        var tipoAlunoDiv = document.createElement('div');
+        tipoAlunoDiv.className = 'tipo-aluno';
+
+        var radioCandidato = document.createElement('input');
+        radioCandidato.type = 'radio';
+        radioCandidato.name = 'tipoAluno' + i;
+        radioCandidato.value = 'candidato';
+        radioCandidato.id = 'candidato' + i;
+
+        var labelCandidato = document.createElement('label');
+        labelCandidato.htmlFor = 'candidato' + i;
+        labelCandidato.innerHTML = 'Candidato';
+
+        var radioCondutor = document.createElement('input');
+        radioCondutor.type = 'radio';
+        radioCondutor.name = 'tipoAluno' + i;
+        radioCondutor.value = 'condutor';
+        radioCondutor.id = 'condutor' + i;
+
+        var labelCondutor = document.createElement('label');
+        labelCondutor.htmlFor = 'condutor' + i;
+        labelCondutor.innerHTML = 'Condutor';
+
+        tipoAlunoDiv.appendChild(radioCandidato);
+        tipoAlunoDiv.appendChild(labelCandidato);
+        tipoAlunoDiv.appendChild(document.createTextNode(' '));
+        tipoAlunoDiv.appendChild(radioCondutor);
+        tipoAlunoDiv.appendChild(labelCondutor);
+
+        alunoBox.appendChild(labelCPF);
+        alunoBox.appendChild(inputCPF);
+        alunoBox.appendChild(tipoAlunoDiv);
+
+        camposDiv.appendChild(alunoBox);
+      }
+    }
+
+    function mostrarCPFs() {
+      var quantidade = parseInt(document.getElementById('quantidadeAlunos').value, 10);
+      var lista = document.getElementById('listaCPFs');
+      var resultado = document.getElementById('resultado');
+      lista.innerHTML = '';
+
+      for (var i = 1; i <= quantidade; i++) {
+        var cpf = document.getElementById('cpf' + i).value;
+        if (cpf && cpf.trim() !== '') {
+          var li = document.createElement('li');
+          li.innerHTML = 'Aluno ' + i + ': ' + cpf;
+          lista.appendChild(li);
+        }
+      }
+
+      resultado.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
